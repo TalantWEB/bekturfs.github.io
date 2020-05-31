@@ -5,10 +5,14 @@
 
   // This function called when user open cart.html
   const init = () => {
+
+    // Загружаем существующие товары из sessionStorage
     loadProducts();
 
+    // Обработчик событий на кнопку "В КОРЗИНУ"
     $(".to-cart-btn").on('click', onClickToCartBtn);
 
+    // вызываем функцию для вывода числа выбранных товаров и общую сумму в шапке
     renderHeaderMiniCart();
   };
 
@@ -42,6 +46,7 @@
   // Add or delete products in cart
   const addProductToCart = (prod, dataId, productsElement) => {
 
+    // Проверяем не существует ли товар в списке товаров
     if (!products[dataId]){
       products = {...prod, ...products};
       productsElement.find(".to-cart-btn").html("Добавлено");
