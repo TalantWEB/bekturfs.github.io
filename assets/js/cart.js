@@ -3,7 +3,7 @@
 
   let products = {};
 
-  // This function called when user open cart.html
+  // This function called when user open any page
   const init = () => {
 
     // Загружаем существующие товары из sessionStorage
