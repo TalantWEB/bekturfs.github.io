@@ -3,17 +3,31 @@
 
   let products = {};
 
+  const setProducts = (prod, dataId) => {
+    products = {...products, ...prod};
+    updateProducts();
+    renderTotalPriceOfProducts();
+    reRenderTotalPriceOfOneProduct(dataId);
+  };
+
   // This function called when user open any page
-  const init = () => {
+  const initCart = () => {
 
     // Загружаем существующие товары из sessionStorage
     loadProducts();
 
-    // Обработчик событий на кнопку "В КОРЗИНУ"
-    $(".to-cart-btn").on('click', onClickToCartBtn);
+    // Если есть элемент с таким классом, вещаем обработчик событий на кнопку "В КОРЗИНУ"
+    if ($(".to-cart-btn")[0]){
+      $(".to-cart-btn").on('click', onClickToCartBtn);
+    }
 
     // вызываем функцию для вывода числа выбранных товаров и общую сумму в шапке
     renderHeaderMiniCart();
+
+    // Если есть элемент с таким классом, выводим выбранные товары
+    if ($(".cart-container")[0]){
+      renderProducts();
+    }
   };
 
   // Function for loading selected products from sessionStorage
@@ -59,6 +73,11 @@
     renderHeaderMiniCart()
   };
 
+  const updateProducts = () => {
+    sessionStorage.setItem("cart", JSON.stringify(products));
+    renderHeaderMiniCart();
+  };
+
 
   // Function for calculating total price of selected products
   const getTotalPriceOfProducts = () => {
@@ -71,8 +90,15 @@
     return totalPrice;
   };
 
+  const getTotalPriceOfOneProduct = (id) => {
+    return products[id] ? parseFloat(products[id].amount) * parseFloat(products[id].price) : 0
+  };
+
   const renderHeaderMiniCart = () => {
-    let numberOfProducts = Object.keys(products).length;
+    let numberOfProducts = 0;
+    for(let key in products){
+      numberOfProducts += products[key]['amount'];
+    }
     $(".header-mini-cart-amount").html(`${numberOfProducts} ($${getTotalPriceOfProducts()})`);
   };
 
@@ -80,30 +106,32 @@
   // CART PAGE
   // Function for rendering products to cart.html
   const renderProducts = () => {
+
     let out = "";
-    for (let i = 0; i < products.length; i++) {
-      out += "<tr>";
-      out +=
-        '<td class="pro-thumbnail"><a href="#"><img src="' +
-        products[i].img +
-        '" alt="" /></a></td>';
-      out +=
-        '<td class="pro-title"><a href="#">' + products[i].name + "</a></td>";
-      out +=
-        '<td class="pro-price"><span class="amount">$' +
-        products[i].price +
-        "</span></td>";
-      out +=
-        '<td class="pro-quantity"><div class="pro-qty"><input type="text" class="pro-qty-input" value="' +
-        products[i].count +
-        '"></div></td>';
-      out += '<td class="pro-subtotal">$' + products[i].price + "</td>";
-      out += '<td class="pro-remove"><a href="#">×</a></td>';
-      out += "</tr>";
+
+    for (let key in products){
+
+      out += `
+      <tr class="cart-product" data-id="${key}">
+        <td class="pro-thumbnail"><a href="#"><img src="${products[key].img}" alt="" /></a></td>
+        <td class="pro-title"><a href="#">${products[key].name}</a></td>
+        <td class="pro-price"><span class="amount">$<span>${products[key].price}</span></span></td>
+        <td class="pro-quantity">
+            <div class="pro-qty">
+                <input type="text" value="${products[key].amount}">
+            </div>
+        </td>
+        <td class="pro-subtotal">$<span class="product-subtotal">${getTotalPriceOfOneProduct(key)}</span></td>
+        <td class="pro-remove"><a href="#">×</a></td>
+      </tr>
+      `
     }
 
     $(".cart-container").html(out);
+
     renderTotalPriceOfProducts();
+    onQuantityChangeListeners();
+    onDeleteListener();
   };
 
   // Function for showing total price of selected products
@@ -111,5 +139,69 @@
     $(".total-amount").html(getTotalPriceOfProducts() + "$");
   };
 
-  init();
+  const reRenderTotalPriceOfOneProduct = (id) => {
+    $(`[data-id="${id}"]`).find('.product-subtotal').html(getTotalPriceOfOneProduct(id));
+    // $(".cart-product").attr(id).html(getTotalPriceOfOneProduct(id))
+  };
+
+  const onDeleteListener = () => {
+    $('.pro-remove a').on('click', function (e) {
+      e.preventDefault();
+
+      let dataId = $(this).closest('.cart-product').attr('data-id');
+      if (dataId){
+        delete products[dataId];
+        updateProducts();
+        renderProducts();
+      }
+    })
+  };
+
+  const onQuantityChangeListeners = () => {
+    /*-----
+      Quantity
+  --------------------------------*/
+    $('.pro-qty').prepend('<span class="dec qtybtn"><i class="ti-minus"></i></span>');
+    $('.pro-qty').append('<span class="inc qtybtn"><i class="ti-plus"></i></span>');
+
+    // Сработает когда пользователь изменяет количество
+    $('.qtybtn').on('click', function()  {
+
+      let $button = $(this);
+      let dataId = $button.closest('.cart-product').attr('data-id');
+
+      let oldValue = $button.parent().find('input').val();
+      let newVal = 1;
+      if ($button.hasClass('inc')) {
+        newVal = parseFloat(oldValue) + 1;
+      } else {
+        // Don't allow decrementing below one
+        newVal = oldValue > 1 ? (parseFloat(oldValue) - 1) : 1
+      }
+
+      let prod = { [dataId]: { name: products[dataId].name, img: products[dataId].img ,price: products[dataId].price , amount: newVal }};
+
+      $button.parent().find('input').val(newVal);
+      setProducts(prod, dataId);
+    });
+
+    //
+    $('.pro-qty input').on('input', function () {
+
+      let $input = $(this);
+      let dataId = $input.closest('.cart-product').attr('data-id');
+
+      let newVal = parseFloat($input.val());
+      if (isNaN(newVal)){
+        newVal = 0;
+      }
+
+      let prod = { [dataId]: { name: products[dataId].name, img: products[dataId].img ,price: products[dataId].price , amount: newVal }};
+
+      setProducts(prod, dataId);
+    })
+  };
+
+  initCart();
+
 })(jQuery);
