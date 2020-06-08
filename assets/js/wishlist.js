@@ -74,11 +74,11 @@
     if (!wishList[dataId]) {
       wishList = Object.assign(wishList, prod);
       //если кнопка имеет класс single-wishlist-btn, просто меняем фон
-      toWishlistBtn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#63D1B5'}) : btn.html("Добавлено");
+      toWishlistBtn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#63D1B5'}) : toWishlistBtn.html("Добавлено");
     } else {
       delete wishList[dataId];
       //если кнопка имеет класс single-wishlist-btn, просто меняем фон
-      toWishlistBtn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#b663d1'}) : btn.html("В избранное") ;
+      toWishlistBtn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#b663d1'}) : toWishlistBtn.html("В избранное") ;
     }
 
     Cookies.set("wishlist", JSON.stringify(wishList));
