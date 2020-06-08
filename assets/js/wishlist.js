@@ -19,6 +19,7 @@
     // Cookies.set("wishlist", JSON.stringify(wishList));
     sessionStorage.setItem("wishlist", JSON.stringify(wishList));
     reRenderHeaderMiniCart()
+    renderHeaderMiniWishList()
   };
 
   var reRenderHeaderMiniCart = function(){
