@@ -54,7 +54,7 @@
     }
   };
 
-  // Add or delete products in cart
+  // Add or delete products in wishlist
   var addProductToWishList = function(event) {
     var element = event.target;
     var productElement = $(element).closest(".product-item");
@@ -69,17 +69,17 @@
 
     var prod = { [dataId]: { name, img, price, amount: 1, size, color } };
 
-    var btn = productElement.find(".to-wishlist-btn");
+    var toWishlistBtn = productElement.find(".to-wishlist-btn");
 
-    // if (!wishList[dataId]) {
-    //   wishList = Object.assign(wishList, prod);
-    //   //если кнопка имеет класс single-wishlist-btn, просто меняем фон
-    //   btn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#63D1B5'}) : btn.html("Добавлено");
-    // } else {
-    //   delete wishList[dataId];
-    //   //если кнопка имеет класс single-wishlist-btn, просто меняем фон
-    //   btn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#b663d1'}) : btn.html("В избранное") ;
-    // }
+    if (!wishList[dataId]) {
+      wishList = Object.assign(wishList, prod);
+      //если кнопка имеет класс single-wishlist-btn, просто меняем фон
+      toWishlistBtn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#63D1B5'}) : btn.html("Добавлено");
+    } else {
+      delete wishList[dataId];
+      //если кнопка имеет класс single-wishlist-btn, просто меняем фон
+      toWishlistBtn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#b663d1'}) : btn.html("В избранное") ;
+    }
 
     Cookies.set("wishlist", JSON.stringify(wishList));
     renderHeaderMiniWishList();
