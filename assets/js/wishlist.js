@@ -16,7 +16,8 @@
   };
 
   var updateWishlistInCookie = function(){
-    Cookies.set("wishlist", JSON.stringify(wishList));
+    // Cookies.set("wishlist", JSON.stringify(wishList));
+    sessionStorage.setItem("wishlist", JSON.stringify(wishList));
     reRenderHeaderMiniCart()
   };
 
@@ -44,8 +45,11 @@
 
   // Function for loading selected products from sessionStorage
   var loadWishList = function(){
-    if (Cookies.get("wishlist")) {
-      wishList = JSON.parse(Cookies.get("wishlist"));
+    // if (Cookies.get("wishlist")) {
+    //   wishList = JSON.parse(Cookies.get("wishlist"));
+    // }
+    if (sessionStorage.getItem("wishlist")){
+      wishList = JSON.parse(sessionStorage.getItem("wishlist"))
     }
 
     for (var key in wishList) {
@@ -81,7 +85,8 @@
       toWishlistBtn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#b663d1'}) : toWishlistBtn.html("В избранное") ;
     }
 
-    Cookies.set("wishlist", JSON.stringify(wishList));
+    // Cookies.set("wishlist", JSON.stringify(wishList));
+    sessionStorage.setItem("wishlist", JSON.stringify(wishList));
     renderHeaderMiniWishList();
   };
 
