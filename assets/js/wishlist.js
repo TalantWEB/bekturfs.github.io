@@ -55,7 +55,7 @@
   };
 
   // Add or delete products in cart
-  const addProductToWishList = (event) => {
+  var addProductToWishList = function(event) {
     var element = event.target;
     var productElement = $(element).closest(".product-item");
     productElement = $(productElement);
