@@ -18,7 +18,9 @@
   var updateWishlistInCookie = function(){
     // Cookies.set("wishlist", JSON.stringify(wishList));
     // sessionStorage.setItem("wishlist", JSON.stringify(wishList));
-    setCookie("wishlist", JSON.stringify(wishList), 30);
+    // setCookie("wishlist", JSON.stringify(wishList), 30);
+    console.log(JSON.stringify(wishList));
+    $.cookie("wishlist", JSON.stringify(wishList), {path: '/'});
     reRenderHeaderMiniCart();
     renderHeaderMiniWishList()
   };
@@ -53,8 +55,11 @@
     // if (sessionStorage.getItem("wishlist")){
     //   wishList = JSON.parse(sessionStorage.getItem("wishlist"))
     // }
-    if (getCookie("wishlist")){
-      wishList = JSON.parse(getCookie("wishlist"));
+    // if (getCookie("wishlist")){
+    //   wishList = JSON.parse(getCookie("wishlist"));
+    // }
+    if ($.cookie("wishlist") && (document.cookie.lastIndexOf("wishlist") !== -1)){
+      wishList = JSON.parse($.cookie("wishlist"));
     }
 
     for (var key in wishList) {
@@ -92,7 +97,8 @@
 
     // Cookies.set("wishlist", JSON.stringify(wishList));
     // sessionStorage.setItem("wishlist", JSON.stringify(wishList));
-    setCookie("wishlist", JSON.stringify(wishList));
+    // setCookie("wishlist", JSON.stringify(wishList));
+    $.cookie("wishlist", JSON.stringify(wishList), {path: '/'});
     renderHeaderMiniWishList();
   };
 
@@ -104,26 +110,9 @@
   // WISHLIST PAGE
   // Function for rendering products to wishList.html
 
-  var ifProductExistInCart = function (id) {
-    var cart = getCartFromSessionStorage();
-    return  cart.hasOwnProperty(id)
-  };
-
-  var getCartFromSessionStorage = function () {
-    var cart = JSON.parse(sessionStorage.getItem('cart'));
-    return cart ? cart : {}
-  };
-
-  var saveCartToSessionStorage = function(cart) {
-    sessionStorage.setItem("cart", JSON.stringify(cart));
-    reRenderHeaderMiniCart();
-  };
-
   var renderWishList = function(){
     var out = "";
-
     for (var key in wishList) {
-
       var productStatus = ifProductExistInCart(key) ? 'Добавлено' : 'В корзину';
 
       out += '<tr class="wishlist-product" data-id="' + key + '">';
@@ -232,29 +221,21 @@
     })
   };
 
+  var ifProductExistInCart = function (id) {
+    var cart = getCartFromSessionStorage();
+    return  cart.hasOwnProperty(id)
+  };
+
+  var getCartFromSessionStorage = function () {
+    var cart = JSON.parse(sessionStorage.getItem('cart'));
+    return cart ? cart : {}
+  };
+
+  var saveCartToSessionStorage = function(cart) {
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+    reRenderHeaderMiniCart();
+  };
+
   initWishlist();
-
-  function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-  }
-
-  function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-  }
 
 })(jQuery);
