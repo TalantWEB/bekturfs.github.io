@@ -40,11 +40,10 @@
   // This function called when start
   var initWishlist = function(){
     loadWishList();
-
-    $(".to-wishlist-btn").on("click", addProductToWishList);
-
     renderHeaderMiniWishList();
     renderWishList();
+
+    $(".to-wishlist-btn").on("click", addProductToWishList);
   };
 
   // Function for loading selected products from sessionStorage
@@ -103,6 +102,7 @@
   };
 
   var renderHeaderMiniWishList = function(){
+    console.log("renderminiwishlist")
     var numberOfProducts = Object.keys(wishList).length ? Object.keys(wishList).length : 0;
     $(".wishlist-amount").html(numberOfProducts);
   };
