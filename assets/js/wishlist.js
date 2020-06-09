@@ -97,7 +97,7 @@
   };
 
   var renderHeaderMiniWishList = function(){
-    var numberOfProducts = Object.keys(wishList).length;
+    var numberOfProducts = Object.keys(wishList).length ? Object.keys(wishList).length : 0;
     $(".wishlist-amount").html(numberOfProducts);
   };
 
