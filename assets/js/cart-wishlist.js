@@ -3,44 +3,46 @@
 
   var KGZ = 77;
   var USD = 1;
+  var usdIcon = ' $';
+  var kgzIcon = ' <span style="text-decoration: underline">c</span>';
+
   var currency = "";
 
   var loadCurrency = function () {
-    if (sessionStorage.getItem("currency")){
+    if (sessionStorage.getItem("currency")) {
       currency = sessionStorage.getItem("currency");
     } else {
       currency = "USD";
-      sessionStorage.setItem("currency", "USD")
+      sessionStorage.setItem("currency", "USD");
     }
 
     reRenderWhenCurrencyChange();
   };
 
   var setCurrency = function (curr) {
-      currency = curr;
-      sessionStorage.setItem("currency", curr);
+    currency = curr;
+    sessionStorage.setItem("currency", curr);
   };
 
-  var initCurrency = function(){
-
+  var initCurrency = function () {
     loadCurrency();
 
     renderCurrency();
 
-    $(".curr-kgz a").on("click", function(){
+    $(".curr-kgz a").on("click", function () {
       setCurrency("KGZ");
       reRenderWhenCurrencyChange();
     });
 
-    $(".curr-usd a").on("click", function(){
+    $(".curr-usd a").on("click", function () {
       setCurrency("USD");
       reRenderWhenCurrencyChange();
-    })
-
+    });
   };
 
   var reRenderWhenCurrencyChange = function () {
     renderCurrency();
+    reRenderProductsPrice();
     renderHeaderMiniWishList();
     renderHeaderMiniCart();
     renderProductsInCart();
@@ -49,17 +51,38 @@
     reRenderTotalPriceOfOneProduct();
   };
 
-  var renderCurrency = function(){
-    if (currency === "KGZ"){
-      $(".curr-kgz a").css("color", "#63d1b5")
-      $(".curr-usd a").css("color", "#ffffff")
+  var renderCurrency = function () {
+    if (currency === "KGZ") {
+      $(".curr-kgz a").css("color", "#63d1b5");
+      $(".curr-usd a").css("color", "#ffffff");
     } else {
-      $(".curr-usd a").css("color", "#63d1b5")
-      $(".curr-kgz a").css("color", "#ffffff")
+      $(".curr-usd a").css("color", "#63d1b5");
+      $(".curr-kgz a").css("color", "#ffffff");
     }
-  }
+  };
 
-  // Cart and setCart
+  var reRenderProductsPrice = function () {
+    $(".content-right .price").each(function(index, obj){
+
+      var $innerPrice = $(obj).find(".inner-price");
+      var $innerPriceIcon = $(obj).find(".inner-price-icon");
+      var dataPrice = $(obj).closest(".price").attr("data-price");
+
+      var price = dataPrice ? parseFloat(dataPrice) : 0;
+
+      if (currency === "KGZ" && price ){
+        $innerPrice.html(price * KGZ);
+        $innerPriceIcon.html(kgzIcon);
+      } else if (currency === "USD" && price){
+        $innerPrice.html(price * USD);
+        $innerPriceIcon.html(usdIcon);
+      }
+    });
+  };
+
+  
+  // CART
+
   var cart = {};
 
   var setCart = function (prod) {
@@ -113,7 +136,9 @@
 
         var prod = { [dataId]: { name, img, price, amount: 1, size, color } };
 
-        addProductToCart(prod, dataId) ? productElement.find(".to-cart-btn").html("Добавлено") : productElement.find(".to-cart-btn").html("В корзину");
+        addProductToCart(prod, dataId)
+          ? productElement.find(".to-cart-btn").html("Добавлено")
+          : productElement.find(".to-cart-btn").html("В корзину");
         setCart();
       });
     }
@@ -157,8 +182,7 @@
     for (var key in products) {
       productPrice =
         currency == "KGZ"
-          ? (products[key].price * KGZ).toString() + " сом"
-          : (products[key].price * USD).toString() + " $";
+          ? (products[key].price * KGZ).toString() + kgzIcon : (products[key].price * USD).toString() + usdIcon;
 
       out += '<tr class="cart-product" data-id="' + key + '">';
       out +=
@@ -192,15 +216,25 @@
 
   // Function for showing total price of selected products
   var renderTotalPriceOfProducts = function () {
+    var $totalAmount = $(".total-amount");
+
+    if (!$totalAmount) {
+      return;
+    }
+
     var totalPriceOfProducts = getTotalPriceOfProducts(cart);
-    $(".total-amount").html(totalPriceOfProducts.toString());
+    $totalAmount.html(totalPriceOfProducts.toString());
   };
 
   var reRenderTotalPriceOfOneProduct = function (id) {
+    var $pro = $("[data-id=" + id + "]");
+
+    if (!$pro) {
+      return;
+    }
+
     var totalPriceOfOneProduct = getTotalPriceOfOneProduct(cart, id);
-    $('[data-id=' + id + ']')
-      .find(".product-subtotal")
-      .html(totalPriceOfOneProduct.toString());
+    $pro.find(".product-subtotal").html(totalPriceOfOneProduct.toString());
   };
 
   // LISTENERS
@@ -315,7 +349,7 @@
     renderHeaderMiniWishList();
   };
 
-  // 
+  //
   var initWishlist = function () {
     loadWishList();
     onClickToWishlistListener();
@@ -337,7 +371,6 @@
       $(selector).find(".to-wishlist-btn").html("Добавлено");
     }
   };
-  
 
   // Add or delete products in wishlist
   var onClickToWishlistListener = function () {
@@ -390,8 +423,7 @@
 
   // Function for rendering products to wishList.html
   var renderProductsInWishlist = function () {
-
-    if (!$("wishlist-container")){
+    if (!$("wishlist-container")) {
       return;
     }
 
@@ -401,8 +433,8 @@
     for (var key in wishList) {
       productPrice =
         currency === "KGZ"
-          ? (wishList[key].price * KGZ).toString() + " сом"
-          : (wishList[key].price * USD).toString() + " $";
+          ? (wishList[key].price * KGZ).toString() + kgzIcon
+          : (wishList[key].price * USD).toString() + usdIcon;
 
       productStatus = ifProductExistInCart(key) ? "Добавлено" : "В корзину";
 
@@ -516,7 +548,7 @@
         $(selector).find(".to-cart-from-wishlist-btn").html("Добавлено");
       }
 
-      setCart()
+      setCart();
     });
   };
 
@@ -527,7 +559,7 @@
       var dataId = $(this).closest(".wishlist-product").attr("data-id");
       if (dataId) {
         delete wishList[dataId];
-        setWishlist()
+        setWishlist();
         renderProductsInWishlist();
       }
     });
@@ -550,10 +582,10 @@
 
     if (currency == "KGZ") {
       totalPrice *= KGZ;
-      return totalPrice.toString() + " сом";
+      return totalPrice.toString() + kgzIcon;
     } else {
       totalPrice *= USD;
-      return totalPrice.toString() + " $";
+      return totalPrice.toString() + usdIcon;
     }
   };
 
@@ -572,15 +604,14 @@
 
     if (currency == "KGZ") {
       totalPrice *= KGZ;
-      return totalPrice.toString() + " сом";
+      return totalPrice.toString() + kgzIcon;
     } else {
       totalPrice *= USD;
-      return totalPrice.toString() + " $";
+      return totalPrice.toString() + usdIcon;
     }
   };
 
   initCart();
   initWishlist();
   initCurrency();
-
 })(jQuery);
