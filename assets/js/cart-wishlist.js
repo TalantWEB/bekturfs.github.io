@@ -3,19 +3,37 @@
 
   var KGZ = 77;
   var USD = 1;
-  var currency = "KGZ";
+  var currency = "";
+
+  var loadCurrency = function () {
+    if (sessionStorage.getItem("currency")){
+      currency = sessionStorage.getItem("currency");
+    } else {
+      currency = "USD";
+      sessionStorage.setItem("currency", "USD")
+    }
+
+    reRenderWhenCurrencyChange();
+  };
+
+  var setCurrency = function (curr) {
+      currency = curr;
+      sessionStorage.setItem("currency", curr);
+  };
 
   var initCurrency = function(){
+
+    loadCurrency();
 
     renderCurrency();
 
     $(".curr-kgz a").on("click", function(){
-      currency = "KGZ";
+      setCurrency("KGZ");
       reRenderWhenCurrencyChange();
     });
 
     $(".curr-usd a").on("click", function(){
-      currency = "USD";
+      setCurrency("USD");
       reRenderWhenCurrencyChange();
     })
 
