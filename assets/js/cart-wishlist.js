@@ -11,19 +11,25 @@
 
     $(".curr-kgz a").on("click", function(){
       currency = "KGZ";
-      renderCurrency();
-      initCart();
-      initWishlist();
-    })
+      reRenderWhenCurrencyChange();
+    });
 
     $(".curr-usd a").on("click", function(){
       currency = "USD";
-      renderCurrency();
-      initCart();
-      initWishlist();
+      reRenderWhenCurrencyChange();
     })
 
-  }
+  };
+
+  var reRenderWhenCurrencyChange = function () {
+    renderCurrency();
+    renderHeaderMiniWishList();
+    renderHeaderMiniCart();
+    renderProductsInCart();
+    renderProductsInWishlist();
+    renderTotalPriceOfProducts();
+    reRenderTotalPriceOfOneProduct();
+  };
 
   var renderCurrency = function(){
     if (currency === "KGZ"){
