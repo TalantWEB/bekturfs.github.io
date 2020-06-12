@@ -1,28 +1,13 @@
 (function ($) {
   "use strict";
 
+  // CURRENCY
   var KGZ = 77;
   var USD = 1;
   var usdIcon = ' $';
   var kgzIcon = ' <span style="text-decoration: underline">c</span>';
 
   var currency = "";
-
-  var loadCurrency = function () {
-    if (sessionStorage.getItem("currency")) {
-      currency = sessionStorage.getItem("currency");
-    } else {
-      currency = "USD";
-      sessionStorage.setItem("currency", "USD");
-    }
-
-    reRenderWhenCurrencyChange();
-  };
-
-  var setCurrency = function (curr) {
-    currency = curr;
-    sessionStorage.setItem("currency", curr);
-  };
 
   var initCurrency = function () {
     loadCurrency();
@@ -40,15 +25,28 @@
     });
   };
 
+  var loadCurrency = function () {
+    if (sessionStorage.getItem("currency")) {
+      currency = sessionStorage.getItem("currency");
+    } else {
+      currency = "USD";
+      sessionStorage.setItem("currency", "USD");
+    }
+    reRenderWhenCurrencyChange();
+  };
+
+  var setCurrency = function (curr) {
+    currency = curr;
+    sessionStorage.setItem("currency", curr);
+  };
+
   var reRenderWhenCurrencyChange = function () {
     renderCurrency();
     reRenderProductsPrice();
-    renderHeaderMiniWishList();
     renderHeaderMiniCart();
     renderProductsInCart();
     renderProductsInWishlist();
     renderTotalPriceOfProducts();
-    reRenderTotalPriceOfOneProduct();
   };
 
   var renderCurrency = function () {
@@ -82,7 +80,6 @@
 
   
   // CART
-
   var cart = {};
 
   var setCart = function (prod) {
@@ -134,7 +131,14 @@
           .first()
           .css("background-color");
 
-        var prod = { [dataId]: { name, img, price, amount: 1, size, color } };
+        var prod = _defineProperty({}, dataId, {
+          name: name,
+          img: img,
+          price: price,
+          amount: 1,
+          size: size,
+          color: color
+        });
 
         addProductToCart(prod, dataId)
           ? productElement.find(".to-cart-btn").html("Добавлено")
@@ -277,14 +281,12 @@
         newVal = oldValue > 1 ? parseFloat(oldValue) - 1 : 1;
       }
 
-      var prod = {
-        [dataId]: {
-          name: cart[dataId].name,
-          img: cart[dataId].img,
-          price: cart[dataId].price,
-          amount: newVal,
-        },
-      };
+      var prod = _defineProperty({}, dataId, {
+        name: cart[dataId].name,
+        img: cart[dataId].img,
+        price: cart[dataId].price,
+        amount: newVal
+      });
 
       $button.parent().find("input").val(newVal);
       setCart(prod);
@@ -292,7 +294,7 @@
       reRenderTotalPriceOfOneProduct(dataId);
     });
 
-    // Срабаботает при изменение количества input-ом
+    //  При изменение количества input-ом
     $(".cart-pro-qty input").on("input", function () {
       var $input = $(this);
       var dataId = $input.closest(".cart-product").attr("data-id");
@@ -302,31 +304,29 @@
         newVal = 0;
       }
 
-      var prod = {
-        [dataId]: {
-          name: cart[dataId].name,
-          img: cart[dataId].img,
-          price: cart[dataId].price,
-          amount: newVal,
-        },
-      };
+      var prod = _defineProperty({}, dataId, {
+        name: cart[dataId].name,
+        img: cart[dataId].img,
+        price: cart[dataId].price,
+        amount: newVal
+      })
 
       setCart(prod);
     });
   };
 
   var updateCartBtnListener = function () {
-    if (!$(".cart-buttons input")) {
+    var cartButtonsInput = $(".cart-buttons input");
+
+    if (!cartButtonsInput) {
       return;
     }
 
-    $(".cart-buttons input").on("click", function (event) {
+    cartButtonsInput.on("click", function (event) {
       event.preventDefault();
-
       for (var key in cart) {
         cart[key]["amount"] = 1;
       }
-
       setCart();
       renderProductsInCart();
     });
@@ -389,7 +389,8 @@
         .first()
         .css("background-color");
 
-      var prod = { [dataId]: { name, img, price, amount: 1, size, color } };
+      var prod = _defineProperty({}, dataId, { name: name, img: img, price: price, amount: 1, size: size, color: color });
+      console.log(prod);
 
       var toWishlistBtn = productElement.find(".to-wishlist-btn");
 
@@ -495,14 +496,12 @@
         newVal = oldValue > 1 ? parseFloat(oldValue) - 1 : 1;
       }
 
-      var prod = {
-        [dataId]: {
-          name: wishList[dataId].name,
-          img: wishList[dataId].img,
-          price: wishList[dataId].price,
-          amount: newVal,
-        },
-      };
+      var prod = _defineProperty({}, dataId, {
+        name: wishList[dataId].name,
+        img: wishList[dataId].img,
+        price: wishList[dataId].price,
+        amount: newVal,
+      });
 
       $button.parent().find("input").val(newVal);
       setWishlist(prod);
@@ -518,14 +517,12 @@
         newVal = 0;
       }
 
-      var prod = {
-        [dataId]: {
-          name: wishList[dataId].name,
-          img: wishList[dataId].img,
-          price: wishList[dataId].price,
-          amount: newVal,
-        },
-      };
+      var prod = _defineProperty({}, dataId, {
+        name: wishList[dataId].name,
+        img: wishList[dataId].img,
+        price: wishList[dataId].price,
+        amount: newVal
+      });
 
       setWishlist(prod);
     });
@@ -536,7 +533,7 @@
       var $button = $(event.target);
       var productId = $button.closest(".wishlist-product").attr("data-id");
 
-      var product = { [productId]: wishList[productId] };
+      var product = _defineProperty({}, productId, wishList[productId]);
 
       var selector = "[data-id=" + productId.toString() + "]";
 
@@ -610,6 +607,9 @@
       return totalPrice.toString() + usdIcon;
     }
   };
+
+  // Function for creating dynamic object keys
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
   initCart();
   initWishlist();
