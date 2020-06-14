@@ -167,7 +167,7 @@
         <div class="row row-30">
 
           <div class="col-12">
-            <div class="row row-20 mb-20 mb-xs-0">
+            <div class="row row-20 mb-20 mb-xs-0 product-item single-product-item" data-id="100">
 
               <div class="col-lg-6 col-12 mb-40">
 
@@ -205,7 +205,7 @@
                     </div>
 
                     <div class="head-right">
-                      <span class="price">$25</span>
+                      <span class="price" data-price="25"><span class="inner-price">25$</span></span>
                     </div>
                   </div>
 
@@ -225,9 +225,9 @@
                     <div class="colors">
                       <h5>Цвета:</h5>
                       <div class="color-options">
-                        <button style="background-color: #ff502e"></button>
-                        <button style="background-color: #fff600"></button>
-                        <button style="background-color: #1b2436"></button>
+                        <button class="product-color-orange" style="background-color: #ff502e"></button>
+                        <button class="product-color-yellow" style="background-color: #fff600"></button>
+                        <button class="product-color-black" style="background-color: #1b2436"></button>
                       </div>
                     </div>                            
 
@@ -235,9 +235,9 @@
 
                   <div class="actions">
 
-                    <button><i class="ti-shopping-cart"></i><span>В КОРЗИНУ</span></button>
+                    <button class="to-cart-btn"><i class="ti-shopping-cart"></i><span class="to-cart-btn-text" style="text-transform: uppercase">В КОРЗИНУ</span></button>
                     <button class="box" data-tooltip="Compare"><i class="ti-control-shuffle"></i></button>
-                    <button class="box" data-tooltip="Wishlist"><i class="ti-heart"></i></button>
+                    <button class="box to-wishlist-btn" data-tooltip="Wishlist"><i class="ti-heart"></i></button>
 
                   </div>
 
