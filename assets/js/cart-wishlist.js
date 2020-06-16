@@ -60,28 +60,50 @@
   };
 
   var reRenderProductsPrice = function () {
-    $(".content-right .price").each(function(index, obj){
 
-      var $innerPrice = $(obj).find(".inner-price");
-      var $innerPriceIcon = $(obj).find(".inner-price-icon");
-      var dataPrice = $(obj).closest(".price").attr("data-price");
+    if ($(".content-right .price")[0]){
+      $(".content-right .price").each(function(index, obj){
 
-      var price = dataPrice ? parseFloat(dataPrice) : 0;
+        var $innerPrice = $(obj).find(".inner-price");
+        var $innerPriceIcon = $(obj).find(".inner-price-icon");
+        var dataPrice = $(obj).closest(".price").attr("data-price");
 
-      if (currency === "KGZ" && price ){
-        $innerPrice.html(price * KGZ);
-        $innerPriceIcon.html(kgzIcon);
-      } else if (currency === "USD" && price){
-        $innerPrice.html(price * USD);
-        $innerPriceIcon.html(usdIcon);
-      }
-    });
+        var price = dataPrice ? parseFloat(dataPrice) : 0;
+
+        if (currency === "KGZ" && price ){
+          $innerPrice.html(price * KGZ);
+          $innerPriceIcon.html(kgzIcon);
+        } else if (currency === "USD" && price){
+          $innerPrice.html(price * USD);
+          $innerPriceIcon.html(usdIcon);
+        }
+      });
+    }
+
+    if ($(".head-right .price")[0]) {
+      $(".head-right .price").each(function(index, obj){
+
+        var $innerPrice = $(obj).find(".inner-price");
+        var $innerPriceIcon = $(obj).find(".inner-price-icon");
+        var dataPrice = $(obj).closest(".price").attr("data-price");
+
+        var price = dataPrice ? parseFloat(dataPrice) : 0;
+
+        if (currency === "KGZ" && price ){
+          $innerPrice.html(price * KGZ);
+          $innerPriceIcon.html(kgzIcon);
+        } else if (currency === "USD" && price){
+          $innerPrice.html(price * USD);
+          $innerPriceIcon.html(usdIcon);
+        }
+      });
+    }
   };
 
   
   // CART
-  var productColor = "black";
-  var productSize = "sm";
+  var productColors = [];
+  var productSizes = [];
   var productAmount = 1;
 
   var cart = {};
@@ -114,7 +136,9 @@
 
     for (var key in cart) {
       var selector = "[data-id=" + key.toString() + "]";
-      $(selector).find(".to-cart-btn").html("Добавлено");
+      $(selector).hasClass("single-product-item") ?
+          $(selector).find(".to-cart-btn-text").html("Добавлено") :
+          $(selector).find(".to-cart-btn").html("Добавлено")
     }
   };
 
@@ -136,8 +160,8 @@
           img: img,
           price: price,
           amount: productAmount,
-          size: productSize,
-          color: productColor
+          size: productSizes,
+          colors: productColors
         });
 
         if (addProductToCart(prod, dataId)){
@@ -292,7 +316,9 @@
         name: cart[dataId].name,
         img: cart[dataId].img,
         price: cart[dataId].price,
-        amount: newVal
+        amount: newVal,
+        colors: cart[dataId].colors,
+        size: cart[dataId].size
       });
 
       $button.parent().find("input").val(newVal);
@@ -315,7 +341,9 @@
         name: cart[dataId].name,
         img: cart[dataId].img,
         price: cart[dataId].price,
-        amount: newVal
+        amount: newVal,
+        colors: cart[dataId].colors,
+        size: cart[dataId].size
       });
 
       setCart(prod);
@@ -375,7 +403,10 @@
 
     for (var key in wishList) {
       var selector = "[data-id=" + key.toString() + "]";
-      $(selector).find(".to-wishlist-btn").html("Добавлено");
+
+      $(selector).hasClass("single-product-item") ?
+          $(selector).find(".to-wishlist-btn").css({"background-color" : "#63D1B5"}) :
+          $(selector).find(".to-wihslist-btn").html("Добавлено")
     }
   };
 
@@ -396,20 +427,21 @@
         img: img,
         price: price,
         amount: productAmount,
-        size: productSize,
-        color: productColor
+        size: productSizes,
+        colors: productColors
       });
 
-      console.log(prod);
-
-      var toWishlistBtn = productElement.find(".to-wishlist-btn");
 
       if (!wishList[dataId]) {
         wishList = Object.assign(wishList, prod);
-        toWishlistBtn.html("Добавлено");
+        productElement.hasClass("single-product-item") ?
+            productElement.find(".to-wishlist-btn").css({"background" : "#63D1B5"}) :
+            productElement.find(".to-wishlist-btn").html("Добавлено")
       } else {
         delete wishList[dataId];
-        toWishlistBtn.html("В избранное");
+        productElement.hasClass("single-product-item") ?
+            productElement.find(".to-wishlist-btn").css({"background" : "#b663d1"}) :
+            productElement.find(".to-wishlist-btn").html("В избранное")
       }
 
       $.cookie("wishlist", JSON.stringify(wishList), { path: "/" });
@@ -504,7 +536,7 @@
         name: wishList[dataId].name,
         img: wishList[dataId].img,
         price: wishList[dataId].price,
-        amount: newVal,
+        amount: newVal
       });
 
       $button.parent().find("input").val(newVal);
@@ -570,6 +602,10 @@
     return cart.hasOwnProperty(id);
   };
 
+  var ifProductExistInWishlist = function (id) {
+    return wishList.hasOwnProperty(id);
+  };
+
   // These functions work for cart and wihslist (Both of them)
 
   // Function for calculating total price of selected products
@@ -613,57 +649,165 @@
   };
 
   // SINGLE-PRODUCT
+
+
   var initSingleProduct = function () {
-    onColorChangeListener();
+    borderIfColorsSelected();
+    onColorChangeListeners();
+    onQuantityChangeInSingleProductListeners();
   };
 
-  var onColorChangeListener = function () {
-    $(".product-color-orange").on("click", function () {
-      var dataId = getProductId(this);
-      productColor = "orange";
-      // для изменения цвета продукта если существует такой продукт в корзине.
-      changeProductColorInCart(dataId);
-      BorderProductColor(this, "blue");
-    });
+  var borderIfColorsSelected = function () {
+    var singleProductId = $(".single-product-item").attr("data-id");
 
-    $(".product-color-yellow").on("click", function () {
-      var dataId = getProductId(this);
-      productColor = "yellow";
+    if (cart.hasOwnProperty(singleProductId)){
+      productColors = cart[singleProductId].colors;
 
-      // для изменения цвета продукта если существует такой продукт в корзине.
-      changeProductColorInCart(dataId);
-      BorderProductColor(this, "blue");
-    });
+      if (productColors.includes("orange")){
+        $(".product-color-orange").css({"border" : "4px solid blue"});
+      }
 
-    $(".product-color-black").on("click", function () {
-      var dataId = getProductId(this);
-      productColor = "black";
+      if (productColors.includes("yellow")){
+        $(".product-color-yellow").css({"border" : "4px solid blue"});
+      }
 
-      // для изменения цвета продукта если существует такой продукт в корзине.
-      changeProductColorInCart(dataId);
-      BorderProductColor(this, "blue");
-    })
-  };
-
-  var clearProductColorBorders = function () {
-    $(".product-color-orange").css({"border" : "0"});
-    $(".product-color-yellow").css({"border" : "0"});
-    $(".product-color-black").css({"border" : "0"});
-  };
-
-  var changeProductColorInCart = function (dataId) {
-    console.log(dataId);
-    if (ifProductExistInCart(dataId)){
-      var prod = _defineProperty({}, dataId, {color: productColor});
-      prod = Object.assign(prod, cart[dataId]);
-      console.log(prod);
-      setCart(prod);
+      if (productColors.includes("black")){
+        $(".product-color-black").css({"border" : "4px solid blue"});
+      }
     }
   };
 
-  var BorderProductColor = function (button, borderColor) {
-    clearProductColorBorders();
-    $(button).css({'border' : '4px solid ' + borderColor})
+  var onColorChangeListeners = function () {
+    $(".product-color-orange").on("click", function () {
+      changeProductColors(getProductId(this), "orange", this)
+    });
+
+    $(".product-color-yellow").on("click", function () {
+      changeProductColors(getProductId(this), "yellow", this)
+    });
+
+    $(".product-color-black").on("click", function () {
+      changeProductColors(getProductId(this), "black", this)
+    });
+  };
+
+  var onQuantityChangeInSingleProductListeners = function () {
+    /*-----
+          Quantity
+      --------------------------------*/
+    var id = $(".single-product-item").attr("data-id");
+    if (ifProductExistInCart(id)){
+      $(".sp-pro-qty input").val(cart[id].amount)
+    } else if (ifProductExistInWishlist(id)) {
+      $(".sp-pro-qty input").val(wishList[id].amount)
+    }
+
+
+    $(".sp-pro-qty").prepend(
+        '<span class="dec qtybtn sp-qtybtn"><i class="ti-minus"></i></span>'
+    );
+    $(".sp-pro-qty").append(
+        '<span class="inc qtybtn sp-qtybtn"><i class="ti-plus"></i></span>'
+    );
+
+    // Сработает когда пользователь изменяет количество
+    $(".sp-qtybtn").on("click", function () {
+      var $button = $(this);
+      var dataId = $button.closest(".single-product-item").attr("data-id");
+
+      var oldValue = $button.parent().find("input").val();
+      var newVal = 1;
+      if ($button.hasClass("inc")) {
+        newVal = parseFloat(oldValue) + 1;
+      } else {
+        // Don't allow decrementing below one
+        newVal = oldValue > 1 ? parseFloat(oldValue) - 1 : 1;
+      }
+
+      if (ifProductExistInCart(dataId)){
+        var prod = _defineProperty({}, dataId, {
+          name: cart[dataId].name,
+          img: cart[dataId].img,
+          price: cart[dataId].price,
+          amount: newVal,
+          colors: cart[dataId].colors,
+          size: cart[dataId].size
+        });
+        setCart(prod);
+      }
+
+      if (ifProductExistInWishlist(dataId)){
+        var prod = _defineProperty({}, dataId, {
+          name: wishList[dataId].name,
+          img: wishList[dataId].img,
+          price: wishList[dataId].price,
+          amount: newVal,
+          colors: wishList[dataId].colors,
+          size: wishList[dataId].size
+        });
+        setWishlist(prod);
+      }
+
+
+      productAmount = newVal;
+      $button.parent().find("input").val(newVal);
+    });
+
+    //
+    $(".sp-pro-qty input").on("input", function () {
+      var $input = $(this);
+      var dataId = $input.closest(".single-product-item").attr("data-id");
+
+      var newVal = parseFloat($input.val());
+      if (isNaN(newVal)) {
+        newVal = 0;
+      }
+
+      if (ifProductExistInCart(dataId)){
+        var prod = _defineProperty({}, dataId, {
+          name: cart[dataId].name,
+          img: cart[dataId].img,
+          price: cart[dataId].price,
+          amount: newVal,
+          colors: cart[dataId].colors,
+          size: cart[dataId].size
+        });
+        setCart(prod);
+      }
+
+      if (ifProductExistInWishlist(dataId)){
+        var prod = _defineProperty({}, dataId, {
+          name: wishList[dataId].name,
+          img: wishList[dataId].img,
+          price: wishList[dataId].price,
+          amount: newVal,
+          colors: wishList[dataId].colors,
+          size: wishList[dataId].size
+        });
+        setWishlist(prod);
+      }
+
+      productAmount = newVal;
+    });
+  };
+
+  var changeProductColors = function (dataId, color, button) {
+    if (productColors.includes(color)){
+      productColors = productColors.filter(function (value) { return value !== color });
+      $(button).css({"border" : "0px"});
+      saveChangesIfProductExistInCart(dataId)
+    } else {
+      productColors.push(color);
+      $(button).css({"border" : "4px solid blue"});
+      saveChangesIfProductExistInCart(dataId)
+    }
+  };
+
+  var saveChangesIfProductExistInCart = function (dataId) {
+    if (ifProductExistInCart(dataId)){
+      cart[dataId].colors = productColors;
+      setCart()
+    }
   };
 
   var getProductId = function (button) {
