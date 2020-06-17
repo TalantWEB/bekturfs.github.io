@@ -4974,6 +4974,12 @@ img.mfp-img {
   }
 }
 
+.color-options .color-inner{
+  cursor: pointer;
+}
+.color-options button.chosen-color{
+  border:4px solid rgba(98, 106, 216, 0.9) !important;
+}
 
 
 

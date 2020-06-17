@@ -167,12 +167,12 @@
         <div class="row row-30">
 
           <div class="col-12">
-            <div class="row row-20 mb-20 mb-xs-0 product-item single-product-item" data-id="100">
+            <div class="row row-20 mb-20 mb-xs-0 product-item cart-product single-product-item" data-id="100">
 
               <div class="col-lg-6 col-12 mb-40">
 
                 <div class="pro-large-img mb-10 fix easyzoom easyzoom--overlay easyzoom--with-thumbnails">
-                  <a href="assets/images/product/product-zoom-1.jpg">
+                  <a class='image' href="assets/images/product/product-zoom-1.jpg">
                     <img src="assets/images/product/product-big-1.jpg" alt=""/>
                   </a>
                 </div>
@@ -192,7 +192,7 @@
                   <div class="head">
                     <div class="head-left">
 
-                      <h3 class="title">Боди</h3>
+                      <h3 class="title"><a>Боди</a></h3>
 
                       <div class="ratting">
                         <i class="fa fa-star"></i>
@@ -205,10 +205,7 @@
                     </div>
 
                     <div class="head-right">
-                      <span class="price" data-price="25">
-                        <span class="inner-price">25</span>
-                        <span class="inner-price-icon"></span>
-                      </span>
+                      <span class="price" data-price="150"> <span class="inner-price">150</span><span class="inner-price-icon">&#8381;</span></span>
                     </div>
                   </div>
 
@@ -222,15 +219,19 @@
 
                     <div class="quantity">
                       <h5>Количество:</h5>
-                      <div class="sp-pro-qty pro-qty"><input type="text" value="1"></div>
+                      <div class="pro-qty single-pro-qty"><input type="text" value="1"></div>
                     </div>                            
+                    
+                    <h5 class="size">Размеры:
+                      <span class="size-inner size-s">S</span>
 
+                    </h5>
                     <div class="colors">
                       <h5>Цвета:</h5>
                       <div class="color-options">
-                        <button class="product-color-orange" style="background-color: #ff502e"></button>
-                        <button class="product-color-yellow" style="background-color: #fff600"></button>
-                        <button class="product-color-black" style="background-color: #1b2436"></button>
+                        <button color='оранжевый' class='chosen-color color-inner' style="background-color: #ff502e"></button>
+                        <button color='жёлтый' class='color-inner'  style="background-color: #fff600"></button>
+                        <button color='темно-синий' class='color-inner'  style="background-color: #1b2436"></button>
                       </div>
                     </div>                            
 
@@ -240,7 +241,7 @@
 
                     <button class="to-cart-btn"><i class="ti-shopping-cart"></i><span class="to-cart-btn-text" style="text-transform: uppercase">В КОРЗИНУ</span></button>
                     <button class="box" data-tooltip="Compare"><i class="ti-control-shuffle"></i></button>
-                    <button class="box to-wishlist-btn" data-tooltip="Wishlist"><i class="ti-heart"></i></button>
+                    <button class="box single-wishlist-btn to-wishlist-btn" data-tooltip="Wishlist"><i class="ti-heart"></i></button>
 
                   </div>
 
