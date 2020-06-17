@@ -82,7 +82,7 @@
   var renderProductPriceInSingle=function(){
     renderProductPrice('.single-product-item .price');
   };
-  
+
   // CART
   var productSize='sm, m, l ,xl';
   var cart = {};
@@ -123,7 +123,7 @@
         cardItem.find('.color-inner').removeClass('chosen-color');
         cardItem.find('span[color="'+cart[key].color+'"]').addClass('chosen-color');
       }
-      
+
       var selector = "[data-id=" + dataId + "]";
       var productElement = $(selector);
       //находим выбранный цвет товара
@@ -134,8 +134,8 @@
       ifProductExistInCart(productElement.attr('data-id')+color)? newBtnText='ДОБАВЛЕНО' : newBtnText='В КОРЗИНУ';
 
       productElement.hasClass("single-product-item") ?
-      productElement.find(".to-cart-btn-text").html(newBtnText) :
-      productElement.find(".to-cart-btn").html(newBtnText);
+          productElement.find(".to-cart-btn-text").html(newBtnText) :
+          productElement.find(".to-cart-btn").html(newBtnText);
 
     }
   };
@@ -158,7 +158,7 @@
     //если один размер то выбирается цветовой ряд
     else {
       color = "цветовой ряд";
-    } 
+    }
     return color;
   };
   //
@@ -167,7 +167,7 @@
     productElement.find('.size .size-inner').each(function(index, obj){
       sizes.push($(obj).html());
     })
-  
+
     return sizes;
   }
   // Для кнопки "В корзину" в shop.html и single-product.html
@@ -228,7 +228,7 @@
     var numberOfProducts = getNumberOfProducts(cart);
     var totalPriceOfProducts = getTotalPriceOfProducts(cart);
     $(".header-mini-cart-amount").html(
-      numberOfProducts + " (" + totalPriceOfProducts + ")"
+        numberOfProducts + " (" + totalPriceOfProducts + ")"
     );
   };
 
@@ -245,42 +245,42 @@
 
     for (var key in products) {
       productPrice =
-        currency == "KGZ"
-          ? (products[key].price * KGZ).toString() + kgzIcon
-          : (products[key].price * USD).toString() + usdIcon;
+          currency == "KGZ"
+              ? (products[key].price * KGZ).toString() + kgzIcon
+              : (products[key].price * USD).toString() + usdIcon;
 
       out += '<tr class="cart-product" data-id="' + cart[key].productId + '">';
       out +=
-        '<td class="pro-thumbnail"><a href="#"><img src="' +
-        products[key].img +
-        '" alt="" /></a></td>';
+          '<td class="pro-thumbnail"><a href="#"><img src="' +
+          products[key].img +
+          '" alt="" /></a></td>';
       out +=
-        '<td class="pro-title"><a href="#">' + products[key].name + "</a></td>";
+          '<td class="pro-title"><a href="#">' + products[key].name + "</a></td>";
       out +=
-        '<td class="pro-price"><span class="amount">' +
-        productPrice +
-        "</span></td>";
+          '<td class="pro-price"><span class="amount">' +
+          productPrice +
+          "</span></td>";
       out +=
-        '<td class="pro-color"><span color="' +
-        cart[key].color +
-        '" class="chosen-color">' +
-        cart[key].color +
-        "</span>";
+          '<td class="pro-color"><span color="' +
+          cart[key].color +
+          '" class="chosen-color">' +
+          cart[key].color +
+          "</span>";
       out +=
-        '<td class="pro-size size">';
-        for(var i=0;i<cart[key].size.length;i++){
-          out +=
+          '<td class="pro-size size">';
+      for(var i=0;i<cart[key].size.length;i++){
+        out +=
             '<span class="size-inner">'+cart[key].size[i]+"</span>"+ (cart[key].size.length>1 ? ","  : "");
-        }
+      }
       out+= '</td>';
       out +=
-        '<td class="pro-quantity"><div class="pro-qty cart-pro-qty"><input type="text" value="' +
-        products[key].amount +
-        '"></div></td>';
+          '<td class="pro-quantity"><div class="pro-qty cart-pro-qty"><input type="text" value="' +
+          products[key].amount +
+          '"></div></td>';
       out +=
-        '<td class="pro-subtotal"><span class="product-subtotal">' +
-        getTotalPriceOfOneProduct(cart, key) +
-        "</span></td>";
+          '<td class="pro-subtotal"><span class="product-subtotal">' +
+          getTotalPriceOfOneProduct(cart, key) +
+          "</span></td>";
       out += '<td class="pro-remove"><a href="#">×</a></td>';
       out += "</tr>";
     }
@@ -304,8 +304,8 @@
     $totalAmount.html(totalPriceOfProducts.toString());
   };
 
-  var reRenderTotalPriceOfOneProduct = function (id) {
-    var $pro = $("[data-id=" + cart[id].productId + "]");
+  var reRenderTotalPriceOfOneProduct = function (id, btn) {
+    var $pro = btn.closest("[data-id=" + cart[id].productId + "]");
 
     if (!$pro) {
       return;
@@ -321,7 +321,7 @@
   // LISTENERS
 
   var onDeleteInCartListener = function () {
-    
+
     $(".pro-remove a").on("click", function (event) {
       event.preventDefault();
 
@@ -341,10 +341,10 @@
           Quantity
       --------------------------------*/
     $(".cart-pro-qty").prepend(
-      '<span class="dec qtybtn cart-qty-btn"><i class="ti-minus"></i></span>'
+        '<span class="dec qtybtn cart-qty-btn"><i class="ti-minus"></i></span>'
     );
     $(".cart-pro-qty").append(
-      '<span class="inc qtybtn cart-qty-btn"><i class="ti-plus"></i></span>'
+        '<span class="inc qtybtn cart-qty-btn"><i class="ti-plus"></i></span>'
     );
 
     // Сработает когда пользователь изменяет количество
@@ -379,7 +379,7 @@
       $button.parent().find("input").val(newVal);
       setCart(prod);
       renderTotalPriceOfProducts(cart);
-      reRenderTotalPriceOfOneProduct(itemId);
+      reRenderTotalPriceOfOneProduct(itemId, $button);
     });
 
     //  При изменение количества input-ом
@@ -393,7 +393,7 @@
       }
       var color = findChosenColor($input.closest(".cart-product"));
       var size = findProductSize($input.closest(".cart-product"));
-    
+
       var itemId=dataId+color;
       var prod = _defineProperty({}, itemId, {
         productId:dataId,
@@ -407,7 +407,7 @@
 
       setCart(prod);
       renderTotalPriceOfProducts(cart);
-      reRenderTotalPriceOfOneProduct(itemId);
+      reRenderTotalPriceOfOneProduct(itemId,$input);
     });
   };
 
@@ -456,23 +456,23 @@
   // Function for loading selected products from sessionStorage
   var loadWishList = function () {
     if (
-      $.cookie("wishlist") &&
-      document.cookie.lastIndexOf("wishlist") !== -1
+        $.cookie("wishlist") &&
+        document.cookie.lastIndexOf("wishlist") !== -1
     ) {
       wishList = JSON.parse($.cookie("wishlist"));
     }
     var btn = $('[data-id]').find('.to-wishlist-btn');
     //Устанавливаем текст кнопки 'в избранное', в дальнейшем установим 'добавлено',если товар есть в списке
     btn.hasClass('single-wishlist-btn')? btn.css({"background-color":'#b663d1'}) : btn.html("В ИЗБРАННОЕ");
-    
+
     for (var key in wishList) {
       var selector = '[data-id=' +wishList[key].productId.toString() + ']';
       var toWishlistBtn = $(selector).find(".to-wishlist-btn");
       //если цвет продукта совпадает с тем что есть в списке, то меняем текст кнопки
       if (wishList[key].color === findChosenColor($(selector))) {
         toWishlistBtn.hasClass("single-wishlist-btn")
-          ? toWishlistBtn.css({ "background-color": "#63D1B5" })
-          : toWishlistBtn.html("ДОБАВЛЕНО");
+            ? toWishlistBtn.css({ "background-color": "#63D1B5" })
+            : toWishlistBtn.html("ДОБАВЛЕНО");
       }
     }
   };
@@ -520,8 +520,8 @@
 
   var renderHeaderMiniWishList = function () {
     var numberOfProducts = Object.keys(wishList).length
-      ? Object.keys(wishList).length
-      : 0;
+        ? Object.keys(wishList).length
+        : 0;
     $(".wishlist-amount").html(numberOfProducts);
   };
 
@@ -539,47 +539,47 @@
     for (var key in wishList) {
       productPrice =
 
-        currency === "KGZ"
-          ? (wishList[key].price * KGZ).toString() + kgzIcon
-          : (wishList[key].price * USD).toString() + usdIcon;
+          currency === "KGZ"
+              ? (wishList[key].price * KGZ).toString() + kgzIcon
+              : (wishList[key].price * USD).toString() + usdIcon;
 
       productStatus = ifProductExistInCart(key) ? "Добавлено" : "В корзину";
       out += '<tr class="wishlist-product" data-id="' + wishList[key].productId + '">';
       out +=
-        '<td class="pro-thumbnail image"><a href="#"><img src="' +
-        wishList[key].img +
-        '" alt="" /></a></td>';
+          '<td class="pro-thumbnail image"><a href="#"><img src="' +
+          wishList[key].img +
+          '" alt="" /></a></td>';
       out +=
-        '<td class="pro-title title"><a href="#">' +
-        wishList[key].name +
-        "</a></td>";
+          '<td class="pro-title title"><a href="#">' +
+          wishList[key].name +
+          "</a></td>";
       out +=
-        '<td class="pro-price"><span class="amount"><span class="inner-price">' +
-        productPrice +
-        "</span>";
-        out +=
+          '<td class="pro-price"><span class="amount"><span class="inner-price">' +
+          productPrice +
+          "</span>";
+      out +=
           '<td class="pro-color"><span color="' +
           wishList[key].color +
           '" class="chosen-color"><span class="inner-price">' +
           wishList[key].color +
           "</span>";
-        out += '<td class="pro-size size">';
-        for (var i = 0; i < wishList[key].size.length; i++) {
-          out +=
+      out += '<td class="pro-size size">';
+      for (var i = 0; i < wishList[key].size.length; i++) {
+        out +=
             '<span class="size-inner">' +
             wishList[key].size[i] +
             "</span>" +
             (wishList[key].size.length > 1 ? "," : "");
-        }
-        out += "</td>";
+      }
+      out += "</td>";
       out +=
-        '<td class="pro-quantity"><div class="pro-qty wishlist-pro-qty"><input type="text" value="' +
-        (cart[key] ? cart[key].amount : 1) +
-        '"></div></td>';
+          '<td class="pro-quantity"><div class="pro-qty wishlist-pro-qty"><input type="text" value="' +
+          (cart[key] ? cart[key].amount : 1) +
+          '"></div></td>';
       out +=
-        '<td class="pro-add-cart"><a class="to-cart-from-wishlist-btn">' +
-        productStatus +
-        "</a></td>";
+          '<td class="pro-add-cart"><a class="to-cart-from-wishlist-btn">' +
+          productStatus +
+          "</a></td>";
       out += '<td class="pro-remove"><a>×</a></td>';
       out += "</tr>";
     }
@@ -596,10 +596,10 @@
           Quantity
       --------------------------------*/
     $(".wishlist-pro-qty").prepend(
-      '<span class="dec qtybtn wishlist-qtybtn"><i class="ti-minus"></i></span>'
+        '<span class="dec qtybtn wishlist-qtybtn"><i class="ti-minus"></i></span>'
     );
     $(".wishlist-pro-qty").append(
-      '<span class="inc qtybtn wishlist-qtybtn"><i class="ti-plus"></i></span>'
+        '<span class="inc qtybtn wishlist-qtybtn"><i class="ti-plus"></i></span>'
     );
 
     // Сработает когда пользователь изменяет количество
@@ -708,7 +708,7 @@
 
     for (var key in products) {
       totalPrice +=
-        parseFloat(products[key].price) * parseFloat(products[key].amount);
+          parseFloat(products[key].price) * parseFloat(products[key].amount);
     }
 
     if (currency === "KGZ") {
@@ -731,8 +731,8 @@
 
   var getTotalPriceOfOneProduct = function (products, id) {
     var totalPrice = products[id]
-      ? parseFloat(products[id].amount) * parseFloat(products[id].price)
-      : 0;
+        ? parseFloat(products[id].amount) * parseFloat(products[id].price)
+        : 0;
 
     if (currency === "KGZ") {
       totalPrice *= KGZ;
@@ -764,7 +764,7 @@
     initializeSingleProQty();
     findProductSize($('.single-product-item'));
   };
- //Обработчик на нажатие блока с цветом
+  //Обработчик на нажатие блока с цветом
   var onColorChangeListener = function () {
     $(".color-options .color-inner").on("click", function(){
       if($(this).hasClass('chosen-color')) $(this).removeClass('chosen-color');
@@ -782,10 +782,10 @@
           Quantity
       --------------------------------*/
     $(".single-pro-qty").prepend(
-      '<span class="dec qtybtn single-qty-btn"><i class="ti-minus"></i></span>'
+        '<span class="dec qtybtn single-qty-btn"><i class="ti-minus"></i></span>'
     );
     $(".single-pro-qty").append(
-      '<span class="inc qtybtn single-qty-btn"><i class="ti-plus"></i></span>'
+        '<span class="inc qtybtn single-qty-btn"><i class="ti-plus"></i></span>'
     );
 
     // Сработает когда пользователь изменяет количество
