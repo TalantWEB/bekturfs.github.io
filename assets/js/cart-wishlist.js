@@ -665,7 +665,7 @@
       var color = findChosenColor($button.closest(".wishlist-product"));
       var product = _defineProperty({}, productId+color, wishList[productId+color]);
 
-      var selector = "[data-id=" + productId.toString() + "]";
+      var selector = $button.closest("[data-id=" + productId.toString() + "]");
 
       if (cart.hasOwnProperty(productId+color)) {
         delete cart[productId+color];
