@@ -144,15 +144,21 @@
   var findChosenColor = function (productElement) {
     var size = findProductSize(productElement);
     var color = "";
-    if (!productElement.find(".chosen-color").length) {
-      color = productElement.find(".color .color-inner:first-child").attr("color");
-    } else if (size.length >= 2) {
-      //если есть выбранный цвет вставляем его, если нет то пустая строка, P.S. В полноценной верстке пустых значений цвета не будет
-      color = productElement.find(".chosen-color").attr("color");
-    } else {
+    //если у товара более одного размера находим выбранный цвет
+    if(size.length >= 2){
+      //если нет выбранного цвета берем первый цвет из спискс цветов товара
+      if (!productElement.find(".chosen-color").length) {
+        color = productElement.find(".color .color-inner:first-child").attr("color") || productElement.find(".color-options .color-inner:first-child").attr("color");
+      }
+      //находим выбранный цвет
+      else{
+        color = productElement.find(".chosen-color").attr("color");
+      }
+    }
+    //если один размер то выбирается цветовой ряд
+    else {
       color = "цветовой ряд";
     } 
-  
     return color;
   };
   //
