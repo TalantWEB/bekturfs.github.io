@@ -4,9 +4,9 @@
   /*-- Variables --*/
   var windows = $(window);
   var screenSize = windows.width();
-
-
-
+  
+  // Update Cart
+  updateCartTotal();
 
   /*-- Product Hover Function --*/
   $(window).on('load', function(){
@@ -430,6 +430,67 @@
     $('[data-method="'+$value+'"]').slideDown();
 
   })
+  
+/*----- 
+	Remove Item
+--------------------------------*/
+$('tbody .pro-remove').on('click', function(e) {
+	e.preventDefault();
+	$(this).parent().remove();
+	updateCartTotal();
+});
+  
+/*----- 
+	 Increasing and Decreasing value of quantity
+--------------------------------*/
+
+$('.pro-qty .inc').on('click', function() {
+	updateCartTotal();
+});
+
+$('.pro-qty .dec').on('click', function() {
+	updateCartTotal();
+});
+  
+// Update value of input element when 'enter' key pressed
+$('.pro-qty input').keypress(function(e) {
+	if (e.which == 13) {
+		e.preventDefault();
+		updateCartTotal();
+	}
+});
+  
+$('.pro-qty input').on('mouseout', function() {
+	updateCartTotal();
+});
+  
+$('.pro-qty input').on('input', function(e) {
+	if (e.value <= 0 || isNaN(e.value)) {
+		e.value = 1;
+	}
+});
+
+/*----- 
+	 Update Cart-Table values
+--------------------------------*/
+
+function updateCartTotal() {
+	var trs = $('.cart-table tbody tr');
+	var total = 0;
+	for (var i = 0; i < trs.length; i++) {
+		var tr = trs[i], price, inputVal, subtotalVal;
+		price = parseInt(tr.querySelector('.pro-price .amount').innerText.replace('$', '')); // get price(integer) of actual item
+		inputVal = parseInt(tr.querySelector('.pro-qty input').value); // get quantity value(integer) of actual item
+		if (inputVal <= 0 || isNaN(inputVal)) {
+			inputVal = 1;
+		}
+		tr.querySelector('.pro-qty input').value = inputVal; // set input value to 1 if value = NaN or value <= 0  
+		subtotalVal = tr.querySelector('.pro-subtotal').innerText = '$'+(price*inputVal);
+		total = total + (price * inputVal);
+	}
+	$('.cart-subtotal .amount').text(`$${total}`);
+	$('.order-total .amount').text(`$${total}`);
+}
 
 
 })(jQuery);
